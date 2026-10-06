@@ -21,7 +21,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import config
+from . import config, formato
 
 PLOTLY_CDN = "https://cdn.plot.ly/plotly-2.35.2.min.js"
 
@@ -635,12 +635,10 @@ def gerar(
     h1 = dados["h1"]
     h2 = dados["h2"]
 
-    def milhar(v) -> str:
-        return f"{v:,.0f}".replace(",", ".")
-
-    def reais(v) -> str:
-        texto = f"{v:,.2f}"
-        return "R$ " + texto.replace(",", "X").replace(".", ",").replace("X", ".")
+    milhar = formato.numero          # 99441      -> "99.441"
+    reais = formato.moeda            # 160.99     -> "R$ 160,99"
+    dec = formato.decimal            # 4.29       -> "4,29"
+    pct = formato.percentual         # 8.11       -> "8,11%"
 
     # Tabela do modelo de dados
     linhas_modelo = "".join(
@@ -666,17 +664,17 @@ def gerar(
     linhas_cortes = "".join(
         f"<tr><td>{c['corte']} dos vendedores</td>"
         f"<td class='num'>{milhar(c['vendedores'])}</td>"
-        f"<td class='num'>{c['pct_receita']:.2f}%</td></tr>"
+        f"<td class='num'>{formato.percentual(c['pct_receita'])}</td></tr>"
         for c in dados["concentracao"]["cortes"]
     )
 
     linhas_faixa = "".join(
         f"<tr><td>{h1['faixas'][i]}</td>"
         f"<td class='num'>{milhar(h1['pedidos'][i])}</td>"
-        f"<td class='num'>{h1['pct_pedidos'][i]:.2f}%</td>"
-        f"<td class='num'>{h1['nota_media'][i]:.2f}</td>"
-        f"<td class='num'>{h1['pct_ruim'][i]:.2f}%</td>"
-        f"<td class='num'>{h1['pct_boa'][i]:.2f}%</td></tr>"
+        f"<td class='num'>{formato.percentual(h1['pct_pedidos'][i])}</td>"
+        f"<td class='num'>{formato.decimal(h1['nota_media'][i])}</td>"
+        f"<td class='num'>{formato.percentual(h1['pct_ruim'][i])}</td>"
+        f"<td class='num'>{formato.percentual(h1['pct_boa'][i])}</td></tr>"
         for i in range(len(h1["faixas"]))
     )
 
@@ -686,7 +684,7 @@ def gerar(
         p_texto = "p < 0,001" if p < 0.001 else f"p = {p:.4f}".replace(".", ",")
         kruskal = (
             f" O teste de Kruskal-Wallis entre as cinco faixas resulta em "
-            f"H = {h1['testes']['kruskal_h']:,.0f} e {p_texto}, o que indica que "
+            f"H = {formato.numero(h1['testes']['kruskal_h'])} e {p_texto}, o que indica que "
             f"as diferenças entre as faixas não são fruto do acaso."
         )
 
@@ -726,12 +724,12 @@ def gerar(
 <!-- ================================================== VISÃO GERAL -->
 <section id="aba-geral" class="aba ativa">
   <div class="kpis">
-    {_kpi("Pedidos", milhar(k['pedidos']), f"{k['pct_entregues']:.2f}% entregues")}
+    {_kpi("Pedidos", milhar(k['pedidos']), f"{pct(k['pct_entregues'])} entregues")}
     {_kpi("Clientes únicos", milhar(k['clientes_unicos']), "em 99.441 identificadores")}
     {_kpi("Vendedores", milhar(k['vendedores']), f"{milhar(k['produtos'])} produtos")}
     {_kpi("Receita de produtos", reais(k['receita_itens']), f"frete à parte: {reais(k['frete_total'])}")}
     {_kpi("Ticket médio", reais(k['ticket_medio']), f"mediana {reais(k['ticket_mediano'])}")}
-    {_kpi("Nota média", f"{k['nota_media']:.2f}".replace('.', ','), f"{milhar(k['avaliacoes'])} avaliações")}
+    {_kpi("Nota média", dec(k['nota_media']), f"{milhar(k['avaliacoes'])} avaliações")}
   </div>
 
   {_grafico("g_sazonalidade", "Pedidos por mês",
@@ -754,19 +752,19 @@ def gerar(
             "Participação de cada forma no número de registros e no valor total pago.")}
 
   <div class="achado">
-    O cartão de crédito responde por <strong>{dados['pagamentos']['pct_registros'][0]:.1f}%
-    dos registros e {dados['pagamentos']['pct_valor'][0]:.1f}% do valor</strong>, com média de
-    {dados['pagamentos']['parcelas'][0]:.2f} parcelas. As demais formas são sempre à vista.
+    O cartão de crédito responde por <strong>{pct(dados['pagamentos']['pct_registros'][0], 1)}
+    dos registros e {pct(dados['pagamentos']['pct_valor'][0], 1)} do valor</strong>, com média de
+    {dec(dados['pagamentos']['parcelas'][0])} parcelas. As demais formas são sempre à vista.
   </div>
 </section>
 
 <!-- ================================================== LOGÍSTICA -->
 <section id="aba-logistica" class="aba">
   <div class="kpis">
-    {_kpi("Tempo médio de entrega", f"{log['tempo_medio']:.2f} dias".replace('.', ','), f"mediana de {log['tempo_mediano']:.0f} dias")}
-    {_kpi("Prazo estimado médio", f"{log['prazo_medio']:.2f} dias".replace('.', ','), f"folga média de {log['folga_media']:.1f} dias".replace('.', ','))}
-    {_kpi("Entregas atrasadas", f"{log['pct_atraso']:.2f}%".replace('.', ','), log['criterio_adotado'])}
-    {_kpi("Pior caso registrado", f"{log['tempo_maximo']:.0f} dias", "entre a compra e a entrega")}
+    {_kpi("Tempo médio de entrega", f"{dec(log['tempo_medio'])} dias", f"mediana de {dec(log['tempo_mediano'], 0)} dias")}
+    {_kpi("Prazo estimado médio", f"{dec(log['prazo_medio'])} dias", f"folga média de {dec(log['folga_media'], 1)} dias")}
+    {_kpi("Entregas atrasadas", pct(log['pct_atraso']), log['criterio_adotado'])}
+    {_kpi("Pior caso registrado", f"{dec(log['tempo_maximo'], 0)} dias", "entre a compra e a entrega")}
   </div>
 
   {_grafico("g_histograma", "Distribuição do tempo de entrega",
@@ -778,10 +776,10 @@ def gerar(
     hora 00:00:00, enquanto <code>order_delivered_customer_date</code> registra
     data e hora. O projeto adota a {log['criterio_adotado']}, que trata a data
     estimada como prazo que vence à meia-noite e resulta em
-    <strong>{log['pct_atraso']:.2f}% de entregas atrasadas</strong>. Pela
+    <strong>{pct(log['pct_atraso'])} de entregas atrasadas</strong>. Pela
     {log['criterio_alternativo']}, o índice seria de
-    {log['pct_atraso_alternativo']:.2f}%. A escolha reclassifica
-    {log['pedidos_divergentes']:,} pedidos, entregues no próprio dia estimado
+    {pct(log['pct_atraso_alternativo'])}. A escolha reclassifica
+    {milhar(log['pedidos_divergentes'])} pedidos, entregues no próprio dia estimado
     depois da meia-noite, e o critério adotado é o mais conservador dos dois.
   </div>
 
@@ -790,7 +788,7 @@ def gerar(
 
   <div class="achado">
     A Olist promete prazos consistentemente maiores que o tempo real de entrega,
-    com folga média de <strong>{log['folga_media']:.1f} dias</strong>. A estratégia
+    com folga média de <strong>{dec(log['folga_media'], 1)} dias</strong>. A estratégia
     protege o índice de pontualidade, mas custa conversão: um prazo anunciado de 23
     dias afasta comprador que receberia em 12.
   </div>
@@ -838,8 +836,8 @@ def gerar(
   <div class="kpis">
     {_kpi("Categorias analisadas", str(h2['total_categorias']), f"{len(h2['dispersao']['categorias'])} com 100+ pedidos")}
     {_kpi("Concentração da receita", f"{h2['categorias_80']} categorias", "respondem por 80% do total")}
-    {_kpi("Melhor nota média", f"{h2['melhor_nota']['nota']:.2f}".replace('.', ','), h2['melhor_nota']['categoria'])}
-    {_kpi("Pior nota média", f"{h2['pior_nota']['nota']:.2f}".replace('.', ','), h2['pior_nota']['categoria'])}
+    {_kpi("Melhor nota média", dec(h2['melhor_nota']['nota']), h2['melhor_nota']['categoria'])}
+    {_kpi("Pior nota média", dec(h2['pior_nota']['nota']), h2['pior_nota']['categoria'])}
   </div>
 
   <div class="grade2">
@@ -872,8 +870,8 @@ def gerar(
             "Doze estados com maior número de clientes, em percentual do total de cada grupo.", alto=True)}
 
   <div class="achado">
-    São Paulo concentra <strong>{dados['geografia']['pct_clientes'][0]:.2f}% dos
-    clientes e {dados['geografia']['pct_vendedores'][0]:.2f}% dos vendedores</strong>.
+    São Paulo concentra <strong>{pct(dados['geografia']['pct_clientes'][0])} dos
+    clientes e {pct(dados['geografia']['pct_vendedores'][0])} dos vendedores</strong>.
     A assimetria aparece nos estados do Nordeste, que compram muito mais do que
     vendem na plataforma, o que dialoga diretamente com o ODS 10 discutido no
     trabalho.
@@ -933,7 +931,8 @@ def gerar(
     <p class="sub">Medida de associação entre postos, apropriada para a nota, que é
        ordinal, e para o tempo de entrega, cuja distribuição é assimétrica.
        O coeficiente do atraso parece modesto porque a grande maioria dos pedidos
-       chega no prazo e varia de antecedência sem variar de nota. O efeito está
+       chega no prazo, {formato.numero(h1['pct_pedidos'][0], 0)}% do total, e varia de antecedência sem variar de
+       nota. O efeito está
        concentrado na minoria que atrasa, e nela é forte, como mostra a aba H1.</p>
     <table>
       <thead><tr><th>Par de variáveis</th><th class="num">Coeficiente</th>
@@ -944,7 +943,7 @@ def gerar(
             <td>negativa e moderada, a mais forte das três</td></tr>
         <tr><td>Dias de atraso e nota</td>
             <td class="num">{str(round(dados['correlacoes']['atraso_nota'], 3)).replace('.', ',')}</td>
-            <td>negativa, diluída pelos 93% entregues no prazo</td></tr>
+            <td>negativa, diluída pelos {formato.numero(h1['pct_pedidos'][0], 0)}% entregues no prazo</td></tr>
         <tr><td>Valor do frete e nota</td>
             <td class="num">{str(round(dados['correlacoes']['frete_nota'], 3)).replace('.', ',')}</td>
             <td>negativa e fraca, praticamente sem efeito</td></tr>
