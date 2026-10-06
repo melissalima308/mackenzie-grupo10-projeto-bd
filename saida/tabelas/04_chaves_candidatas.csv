@@ -1,0 +1,11 @@
+﻿tabela,chave_candidata,linhas,duplicadas,serve_como_pk
+orders,order_id,99441,0,sim
+customers,customer_id,99441,0,sim
+sellers,seller_id,3095,0,sim
+products,product_id,32951,0,sim
+items,order_id + order_item_id,112650,0,sim
+payments,order_id + payment_sequential,103886,0,sim
+reviews,review_id,99224,814,nao
+reviews,order_id,99224,551,nao
+reviews,review_id + order_id,99224,0,sim
+translation,product_category_name,71,0,sim

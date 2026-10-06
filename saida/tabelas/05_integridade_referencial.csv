@@ -1,0 +1,7 @@
+﻿tabela_filha,coluna,tabela_pai,registros,orfaos,situacao
+orders,customer_id,customers,99441,0,ok
+items,order_id,orders,112650,0,ok
+items,product_id,products,112650,0,ok
+items,seller_id,sellers,112650,0,ok
+payments,order_id,orders,103886,0,ok
+reviews,order_id,orders,99224,0,ok
