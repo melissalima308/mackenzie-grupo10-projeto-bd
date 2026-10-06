@@ -1,0 +1,6 @@
+﻿faixa_atraso,pedidos,nota_media,nota_mediana,tempo_entrega_medio,pct_pedidos,pct_nota_1,pct_nota_1_ou_2,pct_nota_4_ou_5
+No prazo,88163,4.29,5.0,10.41,92.01,6.55,9.21,82.79
+1 a 3 dias,2636,3.77,4.0,20.62,2.75,13.69,19.12,66.35
+4 a 7 dias,1773,2.32,1.0,26.18,1.85,53.02,61.25,27.92
+8 a 14 dias,1748,1.75,1.0,32.86,1.82,68.02,78.15,12.76
+Mais de 14 dias,1504,1.71,1.0,52.3,1.57,69.35,78.86,12.23
