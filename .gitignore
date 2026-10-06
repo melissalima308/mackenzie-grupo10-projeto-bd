@@ -1,0 +1,18 @@
+# Os CSV da Olist nao vao para o repositorio: somam cerca de 120 MB e o
+# limite de arquivo do GitHub e de 100 MB. O link do Kaggle esta no README.
+dados/*.csv
+dados/*.zip
+
+# Banco gerado pelo pipeline
+saida/*.db
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Sistema
+.DS_Store
+Thumbs.db

@@ -1,0 +1,10 @@
+# Projeto Aplicado 1 - Grupo 10 - Universidade Presbiteriana Mackenzie
+# Instalacao: pip install -r requirements.txt
+
+pandas>=2.0
+numpy>=1.24
+matplotlib>=3.7
+
+# Opcional. Habilita o teste de Kruskal-Wallis na hipotese H1.
+# Sem o scipy o pipeline roda normalmente, apenas sem esse teste.
+scipy>=1.10
