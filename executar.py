@@ -127,6 +127,10 @@ def main() -> int:
     config.CAMINHO_PAGES.write_text(
         caminho_dashboard.read_text(encoding="utf-8"), encoding="utf-8"
     )
+    # Arquivo vazio que desliga o Jekyll no GitHub Pages. Sem ele, o Pages
+    # processa o HTML antes de publicar e ignora arquivos iniciados por
+    # underscore, o que pode quebrar a pagina sem dar erro visivel.
+    (config.PASTA_DOCS / ".nojekyll").write_text("", encoding="utf-8")
     print(f"Cópia para o GitHub Pages: {config.CAMINHO_PAGES}")
 
     # ------------------------------------------------------------------
