@@ -523,7 +523,7 @@ desenhar('g_h2_pedidos', [{
 
 const QUADRANTES = {
   'Sustenta o faturamento': VERDE,
-  'Risco: muita receita, nota baixa': VERM,
+  'Atenção: receita alta, nota abaixo da mediana': VERM,
   'Potencial de crescimento': TEAL,
   'Baixa prioridade': CINZA
 };

@@ -148,7 +148,7 @@ def executar(tabelas: dict[str, pd.DataFrame], verbose: bool = True) -> dict:
         if alta_receita and alta_nota:
             return "Sustenta o faturamento"
         if alta_receita and not alta_nota:
-            return "Risco: muita receita, nota baixa"
+            return "Atenção: receita alta, nota abaixo da mediana"
         if not alta_receita and alta_nota:
             return "Potencial de crescimento"
         return "Baixa prioridade"
@@ -232,7 +232,7 @@ def executar(tabelas: dict[str, pd.DataFrame], verbose: bool = True) -> dict:
     melhor_nota = melhores_notas.index[0]
 
     receita_risco = float(
-        resumo_quadrantes.loc["Risco: muita receita, nota baixa", "receita"]
+        resumo_quadrantes.loc["Atenção: receita alta, nota abaixo da mediana", "receita"]
     )
     pct_risco = 100 * receita_risco / desempenho["receita"].sum()
     conclusao = (
@@ -247,7 +247,7 @@ def executar(tabelas: dict[str, pd.DataFrame], verbose: bool = True) -> dict:
         f"{pior_nota} ({formato.decimal(piores_notas.iloc[0]['nota_media'])}). "
         f"A receita é concentrada: {categorias_80} das {len(desempenho)} categorias "
         f"respondem por 80% do total. O cruzamento entre receita e nota revela o "
-        f"ponto de atenção: {int(resumo_quadrantes.loc['Risco: muita receita, nota baixa', 'categorias'])} "
+        f"ponto de atenção: {int(resumo_quadrantes.loc['Atenção: receita alta, nota abaixo da mediana', 'categorias'])} "
         f"categorias somam {formato.moeda(receita_risco)}, ou "
         f"{formato.percentual(pct_risco)} da receita, com nota média abaixo da "
         f"mediana. É onde a plataforma mais tem a perder se a insatisfação virar "

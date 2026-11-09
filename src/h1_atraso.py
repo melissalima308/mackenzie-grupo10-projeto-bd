@@ -12,6 +12,8 @@ Metodo:
      entre as faixas.
   5. Medir a associacao com a correlacao de Spearman e, quando scipy
      estiver disponivel, aplicar o teste de Kruskal-Wallis.
+  6. Repetir a comparacao por estado do cliente, para verificar se as
+     regioes mais distantes dos vendedores recebem com mais atraso.
 
 Por que Spearman e nao Pearson: a nota e uma variavel ordinal de 1 a 5 e o
 atraso tem distribuicao fortemente assimetrica. Spearman trabalha com os
@@ -142,6 +144,21 @@ def executar(tabelas: dict[str, pd.DataFrame], verbose: bool = True) -> dict:
     log(f"Spearman (dias de atraso x nota): {spearman_atraso:.3f}")
     log(f"Spearman (tempo total de entrega x nota): {spearman_tempo:.3f}")
 
+    # Grava os testes em tabela para que possam ser citados no relatorio.
+    linhas_testes = [
+        ("Spearman: dias de atraso x nota", testes["spearman_atraso_nota"], None),
+        ("Spearman: tempo total de entrega x nota", testes["spearman_tempo_nota"], None),
+    ]
+    if "kruskal_h" in testes:
+        linhas_testes.append(
+            ("Kruskal-Wallis entre as faixas de atraso", testes["kruskal_h"], testes["kruskal_p"])
+        )
+    _salvar_tabela(
+        pd.DataFrame(linhas_testes, columns=["teste", "estatistica", "p_valor"]),
+        "23_h1_testes_estatisticos.csv",
+        indice=False,
+    )
+
     # ------------------------------------------------------------------
     # Efeito marginal: nota media por dia de atraso, nos 30 primeiros dias
     # ------------------------------------------------------------------
@@ -154,6 +171,45 @@ def executar(tabelas: dict[str, pd.DataFrame], verbose: bool = True) -> dict:
     )
     por_dia = por_dia[por_dia["pedidos"] >= 30]
     _salvar_tabela(por_dia, "22_h1_nota_por_dia_atraso.csv", indice=False)
+
+    # ------------------------------------------------------------------
+    # Atraso e nota por estado do cliente
+    # ------------------------------------------------------------------
+    # Complementa a analise geografica da EDA: a concentracao de vendedores
+    # em SP sugere que clientes distantes recebem com mais atraso. Aqui essa
+    # suposicao e medida diretamente.
+    clientes = tabelas["customers"][["customer_id", "customer_state"]]
+    base_uf = base.merge(clientes, on="customer_id", how="left")
+    por_uf = (
+        base_uf.groupby("customer_state")
+        .agg(
+            pedidos=("order_id", "count"),
+            pct_atraso=("atrasado", "mean"),
+            nota_media=("nota", "mean"),
+            tempo_entrega_medio=("tempo_entrega_dias", "mean"),
+            prazo_estimado_medio=("prazo_estimado_dias", "mean"),
+        )
+        .rename_axis("uf")
+    )
+    por_uf["pct_atraso"] = por_uf["pct_atraso"].mul(100)
+    por_uf = por_uf.round(2).sort_values("pct_atraso", ascending=False)
+    _salvar_tabela(por_uf, "24_h1_atraso_por_uf.csv")
+
+    spearman_uf = float(
+        por_uf[["pct_atraso", "nota_media"]].corr(method="spearman").iloc[0, 1]
+    )
+    testes["spearman_uf_atraso_nota"] = round(spearman_uf, 3)
+    log("\nAtraso e nota por estado do cliente:")
+    log(por_uf.to_string())
+    log(f"Spearman entre estados (% de atraso x nota média): {spearman_uf:.3f}")
+    linhas_testes.append(
+        ("Spearman entre estados: % de atraso x nota média", testes["spearman_uf_atraso_nota"], None)
+    )
+    _salvar_tabela(
+        pd.DataFrame(linhas_testes, columns=["teste", "estatistica", "p_valor"]),
+        "23_h1_testes_estatisticos.csv",
+        indice=False,
+    )
 
     # ------------------------------------------------------------------
     # Figuras
@@ -209,6 +265,27 @@ def executar(tabelas: dict[str, pd.DataFrame], verbose: bool = True) -> dict:
     eixo.set_ylabel("Nota média")
     graficos.salvar("grafico_11_h1_nota_por_dia.png")
 
+    figura, eixo = graficos.nova_figura(9, 5)
+    eixo.scatter(
+        por_uf["pct_atraso"],
+        por_uf["nota_media"],
+        s=(por_uf["pedidos"] / por_uf["pedidos"].max() * 600).clip(lower=25),
+        color=config.CORES["primaria"],
+        alpha=0.7,
+    )
+    for uf, linha in por_uf.iterrows():
+        eixo.annotate(
+            uf,
+            (linha["pct_atraso"], linha["nota_media"]),
+            xytext=(4, 4),
+            textcoords="offset points",
+            fontsize=8,
+        )
+    eixo.set_title("Gráfico 15 - Atraso e nota média por estado do cliente")
+    eixo.set_xlabel("Pedidos entregues com atraso (%)")
+    eixo.set_ylabel("Nota média")
+    graficos.salvar("grafico_15_h1_atraso_por_uf.png")
+
     # ------------------------------------------------------------------
     # Conclusao objetiva
     # ------------------------------------------------------------------
@@ -239,6 +316,7 @@ def executar(tabelas: dict[str, pd.DataFrame], verbose: bool = True) -> dict:
         "por_faixa": por_faixa,
         "distribuicao": distribuicao,
         "por_dia": por_dia,
+        "por_uf": por_uf,
         "testes": testes,
         "conclusao": conclusao,
     }
