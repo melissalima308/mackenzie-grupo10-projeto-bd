@@ -1,29 +1,29 @@
 ﻿categoria,pedidos,receita,nota_media,pct_atraso,quadrante
 health_beauty,8836,1258681.34,4.18,8.96,Sustenta o faturamento
-watches_gifts,5624,1205005.68,4.07,8.52,"Risco: muita receita, nota baixa"
-bed_bath_table,9417,1036988.68,3.97,8.75,"Risco: muita receita, nota baixa"
+watches_gifts,5624,1205005.68,4.07,8.52,"Atenção: receita alta, nota abaixo da mediana"
+bed_bath_table,9417,1036988.68,3.97,8.75,"Atenção: receita alta, nota abaixo da mediana"
 sports_leisure,7720,988048.97,4.17,7.76,Sustenta o faturamento
-computers_accessories,6689,911954.32,4.03,7.7,"Risco: muita receita, nota baixa"
-furniture_decor,6449,729762.49,4.01,8.48,"Risco: muita receita, nota baixa"
+computers_accessories,6689,911954.32,4.03,7.7,"Atenção: receita alta, nota abaixo da mediana"
+furniture_decor,6449,729762.49,4.01,8.48,"Atenção: receita alta, nota abaixo da mediana"
 cool_stuff,3632,635290.85,4.17,6.83,Sustenta o faturamento
 housewares,5884,632248.66,4.14,6.95,Sustenta o faturamento
-auto,3897,592720.11,4.09,8.61,"Risco: muita receita, nota baixa"
+auto,3897,592720.11,4.09,8.61,"Atenção: receita alta, nota abaixo da mediana"
 garden_tools,3518,485256.46,4.14,7.95,Sustenta o faturamento
 toys,3886,483946.6,4.19,7.52,Sustenta o faturamento
-baby,2885,411764.89,4.04,9.18,"Risco: muita receita, nota baixa"
+baby,2885,411764.89,4.04,9.18,"Atenção: receita alta, nota abaixo da mediana"
 perfumery,3162,399124.87,4.2,7.39,Sustenta o faturamento
-telephony,4199,323667.53,4.0,8.53,"Risco: muita receita, nota baixa"
-office_furniture,1273,273960.7,3.62,9.17,"Risco: muita receita, nota baixa"
+telephony,4199,323667.53,4.0,8.53,"Atenção: receita alta, nota abaixo da mediana"
+office_furniture,1273,273960.7,3.62,9.17,"Atenção: receita alta, nota abaixo da mediana"
 stationery,2311,230943.23,4.24,7.77,Sustenta o faturamento
 computers,181,222963.13,4.17,7.34,Sustenta o faturamento
 pet_shop,1710,214315.41,4.24,6.28,Sustenta o faturamento
 musical_instruments,628,191498.88,4.18,8.84,Sustenta o faturamento
 small_appliances,630,190648.58,4.17,6.24,Sustenta o faturamento
-sem_categoria,1451,179535.28,3.91,9.12,"Risco: muita receita, nota baixa"
-electronics,2550,160246.74,4.1,9.81,"Risco: muita receita, nota baixa"
-consoles_games,1062,157465.22,4.07,8.15,"Risco: muita receita, nota baixa"
+sem_categoria,1451,179535.28,3.91,9.12,"Atenção: receita alta, nota abaixo da mediana"
+electronics,2550,160246.74,4.1,9.81,"Atenção: receita alta, nota abaixo da mediana"
+consoles_games,1062,157465.22,4.07,8.15,"Atenção: receita alta, nota abaixo da mediana"
 fashion_bags_accessories,1864,152823.54,4.19,6.65,Sustenta o faturamento
-construction_tools_construction,748,144677.59,4.08,9.1,"Risco: muita receita, nota baixa"
+construction_tools_construction,748,144677.59,4.08,9.1,"Atenção: receita alta, nota abaixo da mediana"
 luggage_accessories,1034,140429.98,4.33,5.5,Sustenta o faturamento
 home_appliances_2,234,113317.74,4.13,7.05,Potencial de crescimento
 home_construction,490,83088.12,3.97,8.07,Baixa prioridade

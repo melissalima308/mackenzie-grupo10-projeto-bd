@@ -1,0 +1,5 @@
+﻿teste,estatistica,p_valor
+Spearman: dias de atraso x nota,-0.176,
+Spearman: tempo total de entrega x nota,-0.235,
+Kruskal-Wallis entre as faixas de atraso,10127.28,0.0
+Spearman entre estados: % de atraso x nota média,-0.821,
